@@ -1,0 +1,701 @@
+---
+title: "Data Analytics Project (Group-O)"
+---
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)  # Add tidyr to use the complete() function
+
+# Load the dataset
+df <- read.csv("D:/Downloads/DataAnalytics_Project.csv")
+
+# Clean the column names by removing unwanted characters or spaces
+colnames(df) <- make.names(colnames(df))
+
+# Filter the dataset for Kalenjin ethnicity
+df_kalenjin <- df %>%
+  filter(ethnicity == "Kalenjin") %>%
+  select(year, category, comp_prim_v2_m, comp_lowsec_v2_m, comp_upsec_v2_m, 
+         comp_prim_1524_m, comp_lowsec_1524_m, comp_upsec_2029_m)
+
+# Convert year to a factor to make sure all years are represented
+df_kalenjin$year <- as.factor(df_kalenjin$year)
+
+# List of variables to plot
+variables <- c("comp_prim_v2_m", "comp_lowsec_v2_m", "comp_upsec_v2_m", 
+               "comp_prim_1524_m", "comp_lowsec_1524_m", "comp_upsec_2029_m")
+
+# Create a named vector to map variable names to their descriptions
+variable_descriptions <- c(
+  comp_prim_v2_m = "Primary Education Completion Rate",
+  comp_lowsec_v2_m = "Lower Secondary Education Completion Rate",
+  comp_upsec_v2_m = "Upper Secondary Education Completion Rate",
+  comp_prim_1524_m = "Primary Education Completion Rate (Ages 15-24)",
+  comp_lowsec_1524_m = "Lower Secondary Education Completion Rate (Ages 15-24)",
+  comp_upsec_2029_m = "Upper Secondary Education Completion Rate (Ages 20-29)"
+)
+
+# Loop through each variable and create plots
+for (var in variables) {
+  
+  # Group by year and category, then calculate the mean for each group
+  df_mean_category <- df_kalenjin %>%
+    group_by(year, category) %>%
+    summarise(mean_value = mean(get(var), na.rm = TRUE), .groups = 'drop')
+
+  # Group by year to calculate the overall mean for each year
+  df_mean_year <- df_mean_category %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(mean_value, na.rm = TRUE), .groups = 'drop')
+
+  # Check if all years are present in df_mean_year, if not add missing years
+  all_years <- factor(unique(df_kalenjin$year))
+  df_mean_year <- df_mean_year %>%
+    complete(year = all_years, fill = list(overall_mean = NA))  # Fill missing years with NA
+
+  # Create the plot for the current variable
+  plot <- ggplot(df_mean_year, aes(x = factor(year), y = overall_mean, group = 1)) +
+    geom_point(size = 3, color = "blue") +  # Point for each year
+    geom_line(color = "blue", size = 1) +  # Line connecting the points
+    labs(title = paste("Overall Education Completion Rate (Kalenjin):", variable_descriptions[var]), 
+         x = "Year", 
+         y = "Completion Rate (%)") +
+    scale_y_continuous(limits = c(0, 1)) +  # Adjust limits based on your data range
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5, size = 10, face = "bold"))
+
+  # Print the plot
+  print(plot)
+}
+
+```
+
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)  # Add tidyr to use the complete() function
+
+# Load the dataset
+df <- read.csv("D:/Downloads/DataAnalytics_Project.csv")
+
+# Clean the column names by removing unwanted characters or spaces
+colnames(df) <- make.names(colnames(df))
+
+df_kalenjin <- df %>%
+  filter(ethnicity == "Kamba") %>%
+  select(year, category, comp_prim_v2_m, comp_lowsec_v2_m, comp_upsec_v2_m, 
+         comp_prim_1524_m, comp_lowsec_1524_m, comp_upsec_2029_m)
+
+# Convert year to a factor to make sure all years are represented
+df_kalenjin$year <- as.factor(df_kalenjin$year)
+
+# List of variables to plot
+variables <- c("comp_prim_v2_m", "comp_lowsec_v2_m", "comp_upsec_v2_m", 
+               "comp_prim_1524_m", "comp_lowsec_1524_m", "comp_upsec_2029_m")
+
+# Create a named vector to map variable names to their descriptions
+variable_descriptions <- c(
+  comp_prim_v2_m = "Primary Education Completion Rate",
+  comp_lowsec_v2_m = "Lower Secondary Education Completion Rate",
+  comp_upsec_v2_m = "Upper Secondary Education Completion Rate",
+  comp_prim_1524_m = "Primary Education Completion Rate (Ages 15-24)",
+  comp_lowsec_1524_m = "Lower Secondary Education Completion Rate (Ages 15-24)",
+  comp_upsec_2029_m = "Upper Secondary Education Completion Rate (Ages 20-29)"
+)
+
+# Loop through each variable and create plots
+for (var in variables) {
+  
+  # Group by year and category, then calculate the mean for each group
+  df_mean_category <- df_kalenjin %>%
+    group_by(year, category) %>%
+    summarise(mean_value = mean(get(var), na.rm = TRUE), .groups = 'drop')
+
+  # Group by year to calculate the overall mean for each year
+  df_mean_year <- df_mean_category %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(mean_value, na.rm = TRUE), .groups = 'drop')
+
+  # Check if all years are present in df_mean_year, if not add missing years
+  all_years <- factor(unique(df_kalenjin$year))
+  df_mean_year <- df_mean_year %>%
+    complete(year = all_years, fill = list(overall_mean = NA))  # Fill missing years with NA
+
+  # Create the plot for the current variable
+  plot <- ggplot(df_mean_year, aes(x = factor(year), y = overall_mean, group = 1)) +
+    geom_point(size = 3, color = "blue") +  # Point for each year
+    geom_line(color = "blue", size = 1) +  # Line connecting the points
+    labs(title = paste("Overall Education Completion Rate (kamba):", variable_descriptions[var]), 
+         x = "Year", 
+         y = "Completion Rate (%)") +
+    scale_y_continuous(limits = c(0, 1)) +  # Adjust limits based on your data range
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5, size = 10, face = "bold"))
+
+  # Print the plot
+  print(plot)
+}
+```
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)  # Add tidyr to use the complete() function
+
+# Load the dataset
+df <- read.csv("D:/Downloads/DataAnalytics_Project.csv")
+
+# Clean the column names by removing unwanted characters or spaces
+colnames(df) <- make.names(colnames(df))
+
+df_kalenjin <- df %>%
+  filter(ethnicity == "Kikuyu") %>%
+  select(year, category, comp_prim_v2_m, comp_lowsec_v2_m, comp_upsec_v2_m, 
+         comp_prim_1524_m, comp_lowsec_1524_m, comp_upsec_2029_m)
+
+# Convert year to a factor to make sure all years are represented
+df_kalenjin$year <- as.factor(df_kalenjin$year)
+
+# List of variables to plot
+variables <- c("comp_prim_v2_m", "comp_lowsec_v2_m", "comp_upsec_v2_m", 
+               "comp_prim_1524_m", "comp_lowsec_1524_m", "comp_upsec_2029_m")
+
+# Create a named vector to map variable names to their descriptions
+variable_descriptions <- c(
+  comp_prim_v2_m = "Primary Education Completion Rate",
+  comp_lowsec_v2_m = "Lower Secondary Education Completion Rate",
+  comp_upsec_v2_m = "Upper Secondary Education Completion Rate",
+  comp_prim_1524_m = "Primary Education Completion Rate (Ages 15-24)",
+  comp_lowsec_1524_m = "Lower Secondary Education Completion Rate (Ages 15-24)",
+  comp_upsec_2029_m = "Upper Secondary Education Completion Rate (Ages 20-29)"
+)
+
+# Loop through each variable and create plots
+for (var in variables) {
+  
+  # Group by year and category, then calculate the mean for each group
+  df_mean_category <- df_kalenjin %>%
+    group_by(year, category) %>%
+    summarise(mean_value = mean(get(var), na.rm = TRUE), .groups = 'drop')
+
+  # Group by year to calculate the overall mean for each year
+  df_mean_year <- df_mean_category %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(mean_value, na.rm = TRUE), .groups = 'drop')
+
+  # Check if all years are present in df_mean_year, if not add missing years
+  all_years <- factor(unique(df_kalenjin$year))
+  df_mean_year <- df_mean_year %>%
+    complete(year = all_years, fill = list(overall_mean = NA))  # Fill missing years with NA
+
+  # Create the plot for the current variable
+  plot <- ggplot(df_mean_year, aes(x = factor(year), y = overall_mean, group = 1)) +
+    geom_point(size = 3, color = "blue") +  # Point for each year
+    geom_line(color = "blue", size = 1) +  # Line connecting the points
+    labs(title = paste("Overall Education Completion Rate (Kikuyu):", variable_descriptions[var]), 
+         x = "Year", 
+         y = "Completion Rate (%)") +
+    scale_y_continuous(limits = c(0, 1)) +  # Adjust limits based on your data range
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5, size = 10, face = "bold"))
+
+  # Print the plot
+  print(plot)
+}
+```
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)  # Add tidyr to use the complete() function
+
+# Load the dataset
+df <- read.csv("D:/Downloads/DataAnalytics_Project.csv")
+
+# Clean the column names by removing unwanted characters or spaces
+colnames(df) <- make.names(colnames(df))
+
+df_kalenjin <- df %>%
+  filter(ethnicity == "Kikuyu") %>%
+  select(year, category, comp_prim_v2_m, comp_lowsec_v2_m, comp_upsec_v2_m, 
+         comp_prim_1524_m, comp_lowsec_1524_m, comp_upsec_2029_m)
+
+# Convert year to a factor to make sure all years are represented
+df_kalenjin$year <- as.factor(df_kalenjin$year)
+
+# List of variables to plot
+variables <- c("comp_prim_v2_m", "comp_lowsec_v2_m", "comp_upsec_v2_m", 
+               "comp_prim_1524_m", "comp_lowsec_1524_m", "comp_upsec_2029_m")
+
+# Create a named vector to map variable names to their descriptions
+variable_descriptions <- c(
+  comp_prim_v2_m = "Primary Education Completion Rate",
+  comp_lowsec_v2_m = "Lower Secondary Education Completion Rate",
+  comp_upsec_v2_m = "Upper Secondary Education Completion Rate",
+  comp_prim_1524_m = "Primary Education Completion Rate (Ages 15-24)",
+  comp_lowsec_1524_m = "Lower Secondary Education Completion Rate (Ages 15-24)",
+  comp_upsec_2029_m = "Upper Secondary Education Completion Rate (Ages 20-29)"
+)
+
+# Loop through each variable and create plots
+for (var in variables) {
+  
+  # Group by year and category, then calculate the mean for each group
+  df_mean_category <- df_kalenjin %>%
+    group_by(year, category) %>%
+    summarise(mean_value = mean(get(var), na.rm = TRUE), .groups = 'drop')
+
+  # Group by year to calculate the overall mean for each year
+  df_mean_year <- df_mean_category %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(mean_value, na.rm = TRUE), .groups = 'drop')
+
+  # Check if all years are present in df_mean_year, if not add missing years
+  all_years <- factor(unique(df_kalenjin$year))
+  df_mean_year <- df_mean_year %>%
+    complete(year = all_years, fill = list(overall_mean = NA))  # Fill missing years with NA
+
+  # Create the plot for the current variable
+  plot <- ggplot(df_mean_year, aes(x = factor(year), y = overall_mean, group = 1)) +
+    geom_point(size = 3, color = "blue") +  # Point for each year
+    geom_line(color = "blue", size = 1) +  # Line connecting the points
+    labs(title = paste("Overall Education Completion Rate (Kikuyu):", variable_descriptions[var]), 
+         x = "Year", 
+         y = "Completion Rate (%)") +
+    scale_y_continuous(limits = c(0, 1)) +  # Adjust limits based on your data range
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5, size = 10, face = "bold"))
+
+  # Print the plot
+  print(plot)
+}
+
+
+
+```
+
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+
+# Load the dataset
+data <- read.csv("D:/Downloads/abcd.csv", check.names = FALSE)  # Use check.names = FALSE to keep original column names
+
+# Check column names to verify correct naming
+print(names(data))
+
+# Remove "X" prefix from year columns, if present
+colnames(data)[5:ncol(data)] <- gsub("^X", "", colnames(data)[5:ncol(data)])
+
+# Verify again to ensure year columns are correctly renamed
+print(names(data))
+
+# Filter for Kenya, ensuring exact column name match
+kenya_data <- data %>%
+  filter(`Country Name` == "Kenya") %>%
+  select(`Country Name`, `Country Code`, `Indicator Name`, `Indicator Code`, `1960`:`2023`)
+
+# Reshape data to long format
+kenya_data_long <- melt(kenya_data, 
+                        id.vars = c("Country Name", "Country Code", "Indicator Name", "Indicator Code"),
+                        variable.name = "Year", 
+                        value.name = "Internet_Usage_Percentage")
+
+# Convert Year to numeric and filter out missing values
+kenya_data_long <- kenya_data_long %>%
+  mutate(Year = as.numeric(as.character(Year))) %>%
+  filter(!is.na(Internet_Usage_Percentage))
+
+# Plot the data
+ggplot(kenya_data_long, aes(x = Year, y = Internet_Usage_Percentage)) +
+  geom_line(color = "blue") +
+  labs(title = "Internet Usage in Kenya Over Time",
+       x = "Year",
+       y = "Internet Usage (%)") +
+  theme_minimal()
+```
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Load the internet usage dataset
+internet_data <- read.csv("D:/Downloads/abcd.csv", check.names = FALSE)
+
+# Clean column names
+colnames(internet_data) <- make.names(colnames(internet_data))
+
+# Extract relevant data from the internet usage dataset
+internet_data_cleaned <- internet_data %>%
+  filter(grepl("Individuals using the Internet", Indicator.Name)) %>%  # Correct column name
+  gather(key = "year", value = "Internet_Usage", -Indicator.Name, -Country.Name) %>%  # Correct key columns
+  mutate(
+    year = as.numeric(gsub("X", "", year)),  # Remove 'X' prefix from years and convert to numeric
+    Internet_Usage = as.numeric(Internet_Usage)
+  ) %>%
+  filter(!is.na(Internet_Usage))
+
+# Ensure variables are defined (replace these with actual education completion rate columns)
+variables <- c("comp_prim_v2_m", "comp_lowsec_v2_m", "comp_upsec_v2_m", 
+               "comp_prim_1524_m", "comp_lowsec_1524_m", "comp_upsec_2029_m")
+
+# Loop through each variable and calculate correlation
+correlation_results <- data.frame(
+  Variable = character(),
+  Correlation = numeric(),
+  stringsAsFactors = FALSE
+)
+
+for (var in variables) {
+  
+  # Group by year and calculate the mean for the education dataset
+  df_mean_year <- df_kalenjin %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(get(var), na.rm = TRUE), .groups = 'drop') %>%
+    mutate(year = as.numeric(as.character(year)))  # Ensure 'year' is numeric
+  
+  # Merge with the internet usage dataset on year
+  merged_data <- merge(df_mean_year, internet_data_cleaned, by = "year")
+  
+  # Check if there are enough data points for correlation
+  if (nrow(merged_data) > 1) {
+    # Calculate the correlation
+    correlation_value <- cor(merged_data$overall_mean, merged_data$Internet_Usage, use = "complete.obs")
+    
+    # Add the result to the dataframe
+    correlation_results <- rbind(
+      correlation_results,
+      data.frame(Variable = var, Correlation = correlation_value)
+    )
+  }
+}
+
+# Print the correlation results
+print(correlation_results)
+
+# Optional: Visualize correlations with a bar plot
+ggplot(correlation_results, aes(x = Variable, y = Correlation)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(title = "Correlation Between Internet Usage and Education Completion Rates",
+       x = "Education Completion Metric",
+       y = "Correlation Coefficient") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Load the internet usage dataset
+internet_data <- read.csv("D:/Downloads/abcd.csv", check.names = FALSE)
+
+# Clean column names
+colnames(internet_data) <- make.names(colnames(internet_data))
+
+# Extract relevant data from the internet usage dataset
+internet_data_cleaned <- internet_data %>%
+  filter(grepl("Individuals using the Internet", Indicator.Name)) %>%  # Correct column name
+  gather(key = "year", value = "Internet_Usage", -Indicator.Name, -Country.Name) %>%  # Correct key columns
+  mutate(
+    year = as.numeric(gsub("X", "", year)),  # Remove 'X' prefix from years and convert to numeric
+    Internet_Usage = as.numeric(Internet_Usage)
+  ) %>%
+  filter(!is.na(Internet_Usage))
+
+# Ensure variables are defined (replace these with actual education completion rate columns)
+variables <- c("comp_prim_v2_m", "comp_lowsec_v2_m", "comp_upsec_v2_m", 
+               "comp_prim_1524_m", "comp_lowsec_1524_m", "comp_upsec_2029_m")
+
+# Loop through each variable and calculate correlation
+correlation_results <- data.frame(
+  Variable = character(),
+  Correlation = numeric(),
+  stringsAsFactors = FALSE
+)
+
+for (var in variables) {
+  
+  # Group by year and calculate the mean for the education dataset
+  df_mean_year <- df_kalenjin %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(get(var), na.rm = TRUE), .groups = 'drop') %>%
+    mutate(year = as.numeric(as.character(year)))  # Ensure 'year' is numeric
+  
+  # Merge with the internet usage dataset on year
+  merged_data <- merge(df_mean_year, internet_data_cleaned, by = "year")
+  
+  # Check if there are enough data points for correlation
+  if (nrow(merged_data) > 1) {
+    # Calculate the correlation
+    correlation_value <- cor(merged_data$overall_mean, merged_data$Internet_Usage, use = "complete.obs")
+    
+    # Add the result to the dataframe
+    correlation_results <- rbind(
+      correlation_results,
+      data.frame(Variable = var, Correlation = correlation_value)
+    )
+  }
+}
+
+# Print the correlation results
+print(correlation_results)
+
+# Optional: Visualize correlations with a bar plot
+ggplot(correlation_results, aes(x = Variable, y = Correlation)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(title = "Correlation Between Internet Usage and Education Completion Rates",
+       x = "Education Completion Metric",
+       y = "Correlation Coefficient") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+```{r}
+#install.packages("forecast")
+```
+
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Load the internet usage dataset
+internet_data <- read.csv("D:/Downloads/abcd.csv", check.names = FALSE)
+
+# Clean column names
+colnames(internet_data) <- make.names(colnames(internet_data))
+
+# Extract relevant data from the internet usage dataset
+internet_data_cleaned <- internet_data %>%
+  filter(grepl("Individuals using the Internet", Indicator.Name)) %>%  # Correct column name
+  gather(key = "year", value = "Internet_Usage", -Indicator.Name, -Country.Name) %>%  # Correct key columns
+  mutate(
+    year = as.numeric(gsub("X", "", year)),  # Remove 'X' prefix from years and convert to numeric
+    Internet_Usage = as.numeric(Internet_Usage)
+  ) %>%
+  filter(!is.na(Internet_Usage))
+
+# Ensure variables are defined (replace these with actual education completion rate columns)
+variables <- c("comp_prim_v2_m", "comp_lowsec_v2_m", "comp_upsec_v2_m", 
+               "comp_prim_1524_m", "comp_lowsec_1524_m", "comp_upsec_2029_m")
+
+# Loop through each variable and calculate correlation
+correlation_results <- data.frame(
+  Variable = character(),
+  Correlation = numeric(),
+  stringsAsFactors = FALSE
+)
+
+# Placeholder for forecasting results
+forecast_results <- data.frame(
+  Year = integer(),
+  Predicted_Completion_Rate = numeric(),
+  stringsAsFactors = FALSE
+)
+
+for (var in variables) {
+  
+  # Group by year and calculate the mean for the education dataset
+  df_mean_year <- df_kalenjin %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(get(var), na.rm = TRUE), .groups = 'drop') %>%
+    mutate(year = as.numeric(as.character(year)))  # Ensure 'year' is numeric
+  
+  # Merge with the internet usage dataset on year
+  merged_data <- merge(df_mean_year, internet_data_cleaned, by = "year")
+  
+  # Check if there are enough data points for correlation
+  if (nrow(merged_data) > 1) {
+    # Calculate the correlation
+    correlation_value <- cor(merged_data$overall_mean, merged_data$Internet_Usage, use = "complete.obs")
+    
+    # Add the result to the correlation results dataframe
+    correlation_results <- rbind(
+      correlation_results,
+      data.frame(Variable = var, Correlation = correlation_value)
+    )
+    
+    # Build a linear regression model for education completion rate based on internet usage
+    model <- lm(overall_mean ~ Internet_Usage, data = merged_data)
+    
+    # Forecasting the completion rate for future years (after 2024)
+    future_years <- data.frame(Internet_Usage = c(60, 65, 70, 75, 80))  # Replace with actual forecasted internet usage for 2025-2029
+    
+    # Predict education completion rates for future years
+    predictions <- predict(model, newdata = future_years)
+    
+    # Store forecast results with the years
+    forecast_results <- rbind(
+      forecast_results,
+      data.frame(Year = 2025:2029, Predicted_Completion_Rate = predictions)
+    )
+  }
+}
+
+# Print the correlation results
+print(correlation_results)
+
+# Print the forecast results
+print(forecast_results)
+
+# Optional: Visualize the forecasted completion rates
+ggplot(forecast_results, aes(x = Year, y = Predicted_Completion_Rate)) +
+  geom_line(color = "red", linetype = "dashed") +  # Forecasted line
+  geom_point(color = "red") +  # Forecasted points
+  labs(title = "Forecasted Education Completion Rates Based on Internet Usage",
+       x = "Year", y = "Predicted Completion Rate (%)") +
+  theme_minimal()
+
+
+```
+
+```{r}
+# Ensure variables are defined (replace these with actual education completion rate columns)
+variables <- c("comp_prim_v2_m", "comp_lowsec_v2_m", "comp_upsec_v2_m", 
+               "comp_prim_1524_m", "comp_lowsec_1524_m", "comp_upsec_2029_m")
+
+# Placeholder for completion rate results for 2003 and 2014
+completion_rate_results <- data.frame(
+  Year = integer(),
+  Variable = character(),
+  Completion_Rate = numeric(),
+  stringsAsFactors = FALSE
+)
+
+# Loop through each variable and calculate the mean for the years 2003 and 2014
+for (var in variables) {
+  
+  # Group by year and calculate the mean for the education dataset
+  df_mean_year <- df_kalenjin %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(get(var), na.rm = TRUE), .groups = 'drop') %>%
+    mutate(year = as.numeric(as.character(year)))  # Ensure 'year' is numeric
+  
+  # Filter the data for the years 2003 and 2014
+  filtered_data <- df_mean_year %>%
+    filter(year %in% c(2003, 2014))
+  
+  # Store the completion rates for these years
+  for (i in 1:nrow(filtered_data)) {
+    completion_rate_results <- rbind(
+      completion_rate_results,
+      data.frame(
+        Year = filtered_data$year[i],
+        Variable = var,
+        Completion_Rate = filtered_data$overall_mean[i]
+      )
+    )
+  }
+}
+
+# Print the completion rate results for 2003 and 2014
+print(completion_rate_results)
+
+```
+```{r}
+# Placeholder for actual data (for years 2003 and 2014)
+completion_rate_results <- data.frame(
+  Year = integer(),
+  Completion_Rate = numeric(),
+  Type = character(),
+  stringsAsFactors = FALSE
+)
+
+# Loop through each variable and calculate the mean for the years 2003 and 2014
+for (var in variables) {
+  
+  # Group by year and calculate the mean for the education dataset
+  df_mean_year <- df_kalenjin %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(get(var), na.rm = TRUE), .groups = 'drop') %>%
+    mutate(year = as.numeric(as.character(year)))  # Ensure 'year' is numeric
+  
+  # Filter the data for the years 2003 and 2014
+  filtered_data <- df_mean_year %>%
+    filter(year %in% c(2003, 2014))
+  
+  # Store the completion rates for these years
+  for (i in 1:nrow(filtered_data)) {
+    completion_rate_results <- rbind(
+      completion_rate_results,
+      data.frame(
+        Year = filtered_data$year[i],
+        Completion_Rate = filtered_data$overall_mean[i],
+        Type = "Actual"
+      )
+    )
+  }
+}
+
+# Placeholder for forecast results (for years 2025-2029)
+forecast_results <- data.frame(
+  Year = integer(),
+  Completion_Rate = numeric(),
+  Type = character(),
+  stringsAsFactors = FALSE
+)
+
+# Loop through each variable and calculate correlation and forecasting
+for (var in variables) {
+  
+  # Group by year and calculate the mean for the education dataset
+  df_mean_year <- df_kalenjin %>%
+    group_by(year) %>%
+    summarise(overall_mean = mean(get(var), na.rm = TRUE), .groups = 'drop') %>%
+    mutate(year = as.numeric(as.character(year)))  # Ensure 'year' is numeric
+  
+  # Merge with the internet usage dataset on year
+  merged_data <- merge(df_mean_year, internet_data_cleaned, by = "year")
+  
+  # Check if there are enough data points for correlation
+  if (nrow(merged_data) > 1) {
+    # Build a linear regression model for education completion rate based on internet usage
+    model <- lm(overall_mean ~ Internet_Usage, data = merged_data)
+    
+    # Forecasting the completion rate for future years (after 2024)
+    future_years <- data.frame(Internet_Usage = c(60, 65, 70, 75, 80))  # Replace with actual forecasted internet usage for 2025-2029
+    
+    # Predict education completion rates for future years
+    predictions <- predict(model, newdata = future_years)
+    
+    # Store forecast results with the years
+    forecast_results <- rbind(
+      forecast_results,
+      data.frame(Year = 2025:2029, Completion_Rate = predictions, Type = "Predicted")
+    )
+  }
+}
+
+# Check if both data frames have the same column names and structure
+print(colnames(completion_rate_results))
+print(colnames(forecast_results))
+
+# Combine the actual and forecasted results
+combined_data <- rbind(completion_rate_results, forecast_results)
+
+# Plot the combined data
+ggplot(combined_data, aes(x = Year, y = Completion_Rate)) +
+  geom_point(aes(color = Type), size = 3) +  # Actual data points
+  geom_line(aes(color = Type, linetype = Type), size = 1) +  # Line for both actual and predicted
+  labs(title = "Education Completion Rates (Actual vs Forecasted)",
+       x = "Year", y = "Completion Rate (%)") +
+  scale_color_manual(values = c("Actual" = "blue", "Predicted" = "red")) +
+  scale_linetype_manual(values = c("Actual" = "solid", "Predicted" = "dashed")) +
+  theme_minimal()
+
+```
+
