@@ -10,8 +10,8 @@ The repository contains the following folders:
 
 1. **`Dataset`**:
    - **Files**:
-     - `data.xlsx`: Contains raw data in spreadsheet format.
-     - `data.csv`: Cleaned version of the dataset for analysis.
+     - `DataAnalytics_Project.xlsx`: Contains raw data in spreadsheet format.
+     - `Dataset - 1.csv`: Cleaned version of the dataset for analysis.
    - **Details**: Includes data on internet penetration, demographic indicators, and educational performance metrics.
 
 2. **`Code`**:
@@ -22,7 +22,7 @@ The repository contains the following folders:
 
 3. **`PPT`**:
    - **Files**:
-     - `Presentation.pptx`: A detailed PowerPoint presentation summarizing the project's objectives, methods, findings, and recommendations.
+     - `FDA Review-2.pptx`: A detailed PowerPoint presentation summarizing the project's objectives, methods, findings, and recommendations.
    - **Details**: Provides a high-level overview of the project, designed for stakeholders and collaborators.
 
 ## **Objectives**
